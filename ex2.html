@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<style>
+
+a{
+    display: block; 
+}    
+    
+</style>
+</head>
+<body onload="myFunction()">
+    <h1>Your News feed</h1>
+    <button type="button" id="showNews">Show News</button>
+    <button type="button" id="refresh">Refresh</button>
+    <select id="select" multiple>
+        <option value="https://www.jpost.com/Rss/RssFeedsHeadlines.aspx">Jerusalem Post</option>
+        <option value="https://www.dailymail.co.uk/articles.rss">Wall Street</option>
+        <option value="https://www.wired.com/feed">Daily Mail</option>
+    </select>
+</body>
+
+<script>
+
+document.querySelector("#refresh").addEventListener("click", myFunction());
+
+function myFunction() {
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: '/showNews',
+            success: function (news) {
+                let ul = ('<ul></ul>');
+                for( let i = 0 ; i< news.link.length; i++){
+                    ul += "<a href="+news.link[i] +">" + news.news[i] + "</a>";
+                $('body').html(ul);
+                }
+                let btn = ('<button type="button" id="my_btn">Click</button>');
+                $('body').append(btn)
+
+                $('#my_btn').click(function() {
+                location.reload();
+                });
+            }
+        });
+    }
+
+
+ $("#select").click( (e) => {
+        $.ajax({
+            type: 'POST',
+            url: '/newsFeed',
+            dataType: "json",
+            data: {news: e.target.value},    
+            success: function (news) {
+            }, complete: function (news) {
+            }
+        });
+    })
+
+</script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</html>
